@@ -2,7 +2,8 @@
 
 import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Upload, FileText } from 'lucide-react';
+import { Upload, FileText, CheckCircle2, Sparkles, Building2, User2, Briefcase } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
 import Header from '../components/Header';
 import '../styles/UploadPage.css';
@@ -10,184 +11,167 @@ import '../styles/UploadPage.css';
 export default function UploadPage() {
   const navigate = useNavigate();
   const fileInputRef = useRef(null);
-  const [candidateName, setCandidateName] = useState('');
-  const [companyName, setCompanyName] = useState('');
-  const [jobTitle, setJobTitle] = useState('');
-  const [jobDescription, setJobDescription] = useState('');
+  const [formData, setFormData] = useState({
+    name: '',
+    company: '',
+    title: '',
+    description: ''
+  });
   const [file, setFile] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [dragActive, setDragActive] = useState(false);
 
-  const handleFileChange = (e) => {
-    const selectedFile = e.target.files?.[0];
-    if (selectedFile) {
-      if (selectedFile.type === 'application/pdf') {
-        setFile(selectedFile);
-        setDragActive(false);
-      } else {
-        toast.error('Please upload a PDF file');
-      }
-    }
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleDrag = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (e.type === 'dragenter' || e.type === 'dragover') {
-      setDragActive(true);
-    } else if (e.type === 'dragleave') {
-      setDragActive(false);
-    }
-  };
-
-  const handleDrop = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setDragActive(false);
-
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      const droppedFile = e.dataTransfer.files[0];
-      if (droppedFile.type === 'application/pdf') {
-        setFile(droppedFile);
-      } else {
-        toast.error('Please upload a PDF file');
-      }
+  const handleFile = (selectedFile) => {
+    if (selectedFile?.type === 'application/pdf') {
+      setFile(selectedFile);
+      toast.success('Resume attached successfully!');
+    } else {
+      toast.error('Only PDF files are supported');
     }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    if (!candidateName || !companyName || !jobTitle || !jobDescription || !file) {
-      toast.error('Please fill in all fields and upload a resume');
-      return;
-    }
-
+    if (!formData.name || !file) return toast.error('Missing required information');
+    
     setIsLoading(true);
-
     setTimeout(() => {
-      const resumeData = {
-        id: Date.now(),
-        candidateName,
-        companyName,
-        jobTitle,
-        jobDescription,
-        fileName: file.name,
-      };
-
-      localStorage.setItem('lastResume', JSON.stringify(resumeData));
-      toast.success('Resume analyzed successfully!');
       navigate('/review/demo');
       setIsLoading(false);
-    }, 1500);
+    }, 2000);
   };
 
   return (
-    <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #eef2ff 0%, #f5f3ff 50%, #fdf2f8 100%)', backgroundAttachment: 'fixed' }}>
+    <div className="upload-wrapper">
       <Header />
+      
+      <main className="upload-main">
+        {/* Left Side: Dynamic Form */}
+        <section className="form-column">
+          <motion.div 
+            initial={{ opacity: 0, x: -30 }} 
+            animate={{ opacity: 1, x: 0 }}
+            className="content-header"
+          >
+            <span className="badge-ai"><Sparkles size={14} /> AI Engine v2.0</span>
+            <h1>Analyze your <span className="gradient-text">Resume</span></h1>
+            <p>Our AI scans 50+ parameters to match you with top-tier companies.</p>
+          </motion.div>
 
-      <div className="upload-container">
-        <div className="upload-card">
-          {/* Header */}
-          <div className="upload-header">
-            <h1 className="upload-title">
-              Smart feedback<br />for your <span className="upload-title-highlight">dream job</span>
-            </h1>
-            <p className="upload-subtitle">Drop your resume for an ATS score and improvement tips</p>
-          </div>
-
-          {/* Form */}
-          <form onSubmit={handleSubmit} className="upload-form">
-            {/* Candidate Info */}
-            <div>
-              <div className="form-section-title">Your Information</div>
-              <div className="form-group">
-                <label className="form-label">Candidate Name</label>
-                <input
-                  type="text"
-                  value={candidateName}
-                  onChange={(e) => setCandidateName(e.target.value)}
-                  placeholder="Janine Ryan"
-                  className="form-input"
+          <form className="glass-form" onSubmit={handleSubmit}>
+            <div className="input-row">
+              <div className="input-group">
+                <label><User2 size={16} /> Full Name</label>
+                <input 
+                  name="name" 
+                  placeholder="e.g. Alex Johnson" 
+                  onChange={handleInputChange} 
+                />
+              </div>
+              <div className="input-group">
+                <label><Building2 size={16} /> Target Company</label>
+                <input 
+                  name="company" 
+                  placeholder="e.g. Google" 
+                  onChange={handleInputChange} 
                 />
               </div>
             </div>
 
-            {/* Job Info */}
-            <div>
-              <div className="form-section-title">Job Details</div>
-              <div className="form-group">
-                <label className="form-label">Company Name</label>
-                <input
-                  type="text"
-                  value={companyName}
-                  onChange={(e) => setCompanyName(e.target.value)}
-                  placeholder="Google"
-                  className="form-input"
-                />
-              </div>
-
-              <div className="form-group">
-                <label className="form-label">Job Title</label>
-                <input
-                  type="text"
-                  value={jobTitle}
-                  onChange={(e) => setJobTitle(e.target.value)}
-                  placeholder="Frontend Developer"
-                  className="form-input"
-                />
-              </div>
-
-              <div className="form-group">
-                <label className="form-label">Job Description</label>
-                <textarea
-                  value={jobDescription}
-                  onChange={(e) => setJobDescription(e.target.value)}
-                  placeholder="Paste the job description here with responsibilities & requirements..."
-                  className="form-textarea"
-                />
-              </div>
+            <div className="input-group">
+              <label><Briefcase size={16} /> Target Job Title</label>
+              <input 
+                name="title" 
+                placeholder="e.g. Senior Product Designer" 
+                onChange={handleInputChange} 
+              />
             </div>
 
-            {/* Upload Area */}
-            <div>
-              <div className="form-section-title">Upload Resume</div>
-              <div
-                className={`upload-area ${dragActive ? 'active' : ''}`}
-                onDragEnter={handleDrag}
-                onDragLeave={handleDrag}
-                onDragOver={handleDrag}
-                onDrop={handleDrop}
-                onClick={() => fileInputRef.current?.click()}
-              >
-                <div className="upload-icon">
-                  <Upload size={24} />
-                </div>
-                <p className="upload-text">Click to upload or drag and drop</p>
-                <p className="upload-hint">PDF (up to 5MB)</p>
-                {file && <p className="file-name">✓ {file.name}</p>}
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept=".pdf"
-                  onChange={handleFileChange}
-                  className="upload-input"
-                />
-              </div>
+            <div className="input-group">
+              <label><FileText size={16} /> Job Description</label>
+              <textarea 
+                name="description" 
+                placeholder="Paste the key responsibilities..." 
+                onChange={handleInputChange}
+              />
             </div>
 
-            {/* Submit Button */}
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="submit-button"
-              style={{ opacity: isLoading ? 0.6 : 1 }}
+            <div 
+              className={`dropzone ${dragActive ? 'drag-active' : ''} ${file ? 'has-file' : ''}`}
+              onDragOver={(e) => { e.preventDefault(); setDragActive(true); }}
+              onDragLeave={() => setDragActive(false)}
+              onDrop={(e) => { e.preventDefault(); handleFile(e.dataTransfer.files[0]); }}
+              onClick={() => fileInputRef.current.click()}
             >
-              {isLoading ? 'Analyzing Resume...' : 'See AI Report'}
+              <input type="file" ref={fileInputRef} hidden onChange={(e) => handleFile(e.target.files[0])} />
+              {file ? (
+                <div className="file-ready">
+                  <CheckCircle2 size={32} color="#10b981" />
+                  <div>
+                    <p className="file-name">{file.name}</p>
+                    <span className="file-size">{(file.size / 1024).toFixed(1)} KB • Ready for scan</span>
+                  </div>
+                </div>
+              ) : (
+                <div className="upload-prompt">
+                  <Upload size={28} />
+                  <p>Drop your PDF resume here or <span>Browse</span></p>
+                </div>
+              )}
+            </div>
+
+            <button className="submit-btn" disabled={isLoading}>
+              {isLoading ? <div className="spinner"></div> : 'Start AI Analysis'}
             </button>
           </form>
-        </div>
-      </div>
+        </section>
+
+        {/* Right Side: Real-time Live Preview */}
+        <section className="preview-column">
+          <div className="preview-sticky">
+            <div className="preview-label">Live Analysis Preview</div>
+            <motion.div 
+              layout
+              className="preview-card"
+            >
+              <div className="preview-header">
+                <div className="mock-avatar">{formData.name ? formData.name[0] : '?'}</div>
+                <div className="mock-info">
+                  <h4>{formData.name || 'Candidate Name'}</h4>
+                  <p>{formData.title || 'Desired Position'}</p>
+                </div>
+              </div>
+
+              <div className="mock-meta">
+                <div className="meta-item">
+                  <span>Applying to</span>
+                  <strong>{formData.company || 'Company'}</strong>
+                </div>
+                <div className="meta-item">
+                  <span>ATS Status</span>
+                  <span className="status-badge">Pending</span>
+                </div>
+              </div>
+
+              <div className="analysis-skeleton">
+                <div className="skeleton-bar" style={{ width: '100%' }}></div>
+                <div className="skeleton-bar" style={{ width: '80%' }}></div>
+                <div className="skeleton-bar" style={{ width: '60%' }}></div>
+              </div>
+
+              <div className="preview-footer">
+                <Sparkles size={16} color="#7c3aed" />
+                <span>AI will generate report instantly</span>
+              </div>
+            </motion.div>
+          </div>
+        </section>
+      </main>
     </div>
   );
 }

@@ -20,12 +20,15 @@ function App() {
         <Route path="/signup" element={<SignupPage />} />
 
         {/* Protected Routes */}
-        <Route element={<PrivateRoute />}>
-          <Route path="/dashboard" element={<ResumeDashboard />} />
-          <Route path="/job-details" element={<JobDetailsPage />} />
-          <Route path="/upload" element={<UploadPage />} />
-          <Route path="/review/:id" element={<ResumeReviewPage />} />
-        </Route>
+      {/* Protected Routes */}
+<Route element={<PrivateRoute />}>
+  <Route path="/dashboard" element={<ResumeDashboard />} />
+  <Route path="/job-details" element={<JobDetailsPage />} />
+  <Route path="/upload" element={<UploadPage />} />
+  
+  {/* Ye line demo aur actual ID dono handle karegi */}
+  <Route path="/review/:id" element={<ResumeReviewPage />} />
+</Route>
 
         {/* Redirect to dashboard as default */}
         <Route path="/" element={<Navigate to="/dashboard" replace />} />

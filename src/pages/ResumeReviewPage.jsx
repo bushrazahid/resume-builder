@@ -1,186 +1,143 @@
-import { useEffect, useState } from "react";
-// Vite mein 'react-router-dom' use hota hai, Next.js wala 'next/navigation' nahi
+'use client';
+
+import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import Header from "../components/Header";
-// Agar file nahi hai toh error dega, isliye check karlein ya comment rakhen
-// import '../styles/ResumeReviewPage.css'; 
-import { Check, AlertCircle, Info, ChevronDown } from "lucide-react"; // lucide-react standard hai
-import { motion } from "framer-motion";
+import '../styles/ResumeReviewPage.css'; 
+import { 
+  AlertCircle, CheckCircle2, Sparkles, Wand2, 
+  Download, Share2, Target, BarChart3, 
+  Layout, Zap, Info, ChevronRight 
+} from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
-const sampleResumeData = {
-  name: 'David Donaldson',
-  email: 'davidd@email.com',
-  phone: '+1-234-567-8901',
-  location: 'San Francisco, CA',
-  summary: 'Experienced Frontend Developer with 5+ years in React, TypeScript, and modern web technologies. Passionate about building user-centric applications with excellent performance.',
-  experience: [
-    {
-      company: 'Tech Corp',
-      position: 'Senior Frontend Developer',
-      duration: '2021 - Present',
-      details: ['Led development of customer dashboard', 'Improved performance by 40%']
-    },
-    {
-      company: 'StartUp Inc',
-      position: 'Frontend Developer',
-      duration: '2019 - 2021',
-      details: ['Developed responsive UI components', 'Mentored junior developers']
-    }
-  ],
-  education: [
-    {
-      school: 'State University',
-      degree: 'B.S. in Computer Science',
-      year: '2019'
-    }
-  ],
-  skills: ['React', 'TypeScript', 'JavaScript', 'CSS', 'Node.js', 'Git', 'Figma']
-};
+// --- Sub-Components for Clean Code ---
 
-const scores = {
-  overall: 81,
-  format: 92,
-  content: 78,
-  keywords: 74
-};
+const ScoreRing = ({ score }) => (
+  <div className="score-ring-container">
+    <svg viewBox="0 0 36 36" className="circular-chart">
+      <path className="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+      <motion.path 
+        className="circle-stroke" 
+        initial={{ strokeDasharray: "0, 100" }}
+        animate={{ strokeDasharray: `${score}, 100` }}
+        transition={{ duration: 1.5, ease: "easeOut" }}
+        d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" 
+      />
+    </svg>
+    <div className="score-label-overlay">
+      <span className="score-number">{score}</span>
+      <span className="score-unit">%</span>
+    </div>
+  </div>
+);
 
 export default function ResumeReviewPage() {
-  const [expandedSections, setExpandedSections] = useState({});
-  const params = useParams(); // URL se ID wagera lene ke liye
+  const [activeIssue, setActiveIssue] = useState('impact');
+  const [isScanning, setIsScanning] = useState(true);
 
-  const toggleSection = (section) => {
-    setExpandedSections(prev => ({
-      ...prev,
-      [section]: !prev[section]
-    }));
-  };
+  useEffect(() => {
+    const timer = setTimeout(() => setIsScanning(false), 2500);
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
-    <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #eef2ff 0%, #f5f3ff 50%, #fdf2f8 100%)', backgroundAttachment: 'fixed', paddingBottom: '4rem' }}>
+    <div className="pro-dashboard-wrapper">
       <Header />
-
-      <div className="max-w-7xl mx-auto px-4 pt-8">
-        {/* Tabs */}
-        <div className="flex gap-4 mb-8 border-b border-gray-200">
-          <button className="pb-2 border-b-2 border-purple-600 font-semibold text-purple-600">David Donaldson</button>
-          <button className="pb-2 text-gray-500 hover:text-purple-600">Detailed Report</button>
-          <button className="pb-2 text-gray-500 hover:text-purple-600">Resume Preview</button>
+      
+      <div className="utility-header">
+        <div className="container-wide flex-between">
+          <div className="breadcrumb-nav">
+            <span className="fade-text">Analysis</span> <ChevronRight size={14}/> <strong>David_Resume_V2.pdf</strong>
+          </div>
+          <div className="button-group">
+            <button className="btn-ghost"><Share2 size={16}/> Share</button>
+            <button className="btn-solid"><Download size={16}/> Export Report</button>
+          </div>
         </div>
+      </div>
 
-        {/* Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          
-          {/* Left Panel - Resume Preview */}
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
-            <div className="mb-8">
-              <h2 className="text-3xl font-bold text-gray-900 mb-1">{sampleResumeData.name}</h2>
-              <p className="text-sm text-gray-500">
-                {sampleResumeData.email} | {sampleResumeData.phone} | {sampleResumeData.location}
-              </p>
+      <div className="dashboard-main-grid container-wide">
+        
+        {/* Left Side: Diagnostics */}
+        <aside className="panel-left">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+            className="card-premium score-card"
+          >
+            <ScoreRing score={81} />
+            <h3>Overall Match</h3>
+            <p className="small-text">Optimized for Senior Frontend roles</p>
+          </motion.div>
+
+          <div className="metrics-stack">
+            <div className="metric-item">
+              <div className="metric-info"><span>Keywords</span> <strong>74%</strong></div>
+              <div className="progress-track"><motion.div initial={{width:0}} animate={{width:'74%'}} className="progress-fill purple" /></div>
             </div>
-
-            <div className="mb-6">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-purple-600 mb-2">Professional Summary</h3>
-              <p className="text-gray-700 leading-relaxed">{sampleResumeData.summary}</p>
+            <div className="metric-item">
+              <div className="metric-info"><span>Readability</span> <strong>92%</strong></div>
+              <div className="progress-track"><motion.div initial={{width:0}} animate={{width:'92%'}} className="progress-fill green" /></div>
             </div>
+          </div>
+        </aside>
 
-            <div className="mb-6">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-purple-600 mb-4">Experience</h3>
-              {sampleResumeData.experience.map((exp, idx) => (
-                <div key={idx} className="mb-6 last:mb-0">
-                  <div className="flex justify-between items-start">
-                    <h4 className="font-bold text-gray-900">{exp.position}</h4>
-                    <span className="text-xs text-gray-400">{exp.duration}</span>
-                  </div>
-                  <p className="text-sm font-medium text-gray-600 mb-2">{exp.company}</p>
-                  <ul className="list-disc list-inside text-sm text-gray-600 space-y-1">
-                    {exp.details.map((detail, i) => (
-                      <li key={i}>{detail}</li>
-                    ))}
+        {/* Center: Live Resume Canvas */}
+        <main className="document-canvas">
+          <div className="resume-sheet-paper">
+            {isScanning && <div className="scanning-beam" />}
+            
+            <header className="resume-head">
+              <h1 className="name-title">David Donaldson</h1>
+              <div className="contact-strip">San Francisco, CA • davidd@email.com • +1-234-567-8901</div>
+            </header>
+
+            <div className="resume-body-content">
+              <section className="res-section">
+                <h4 className="res-h4">Experience</h4>
+                <div className="res-block">
+                  <div className="res-row"><strong>Tech Corp</strong> <span>2021 - Present</span></div>
+                  <p className="italic">Senior Frontend Developer</p>
+                  <ul className="res-bullets">
+                    <li>Led migration from Monolith to Micro-frontends.</li>
+                    <li className={`ai-highlighter ${activeIssue === 'impact' ? 'active' : ''}`} onClick={() => setActiveIssue('impact')}>
+                      Improved performance by 40%.
+                      <span className="floating-tag"><Sparkles size={10}/> AI Hint</span>
+                    </li>
                   </ul>
                 </div>
-              ))}
-            </div>
-
-            <div>
-              <h3 className="text-xs font-bold uppercase tracking-wider text-purple-600 mb-3">Skills</h3>
-              <div className="flex flex-wrap gap-2">
-                {sampleResumeData.skills.map((skill, idx) => (
-                  <span key={idx} className="px-3 py-1 bg-purple-50 text-purple-700 rounded-md text-xs font-bold">
-                    {skill}
-                  </span>
-                ))}
-              </div>
+              </section>
             </div>
           </div>
+        </main>
 
-          {/* Right Panel - Scores & Feedback */}
-          <div className="space-y-6">
-            {/* Overall Score Card */}
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-              <div className="flex justify-between items-center mb-4">
-                <span className="font-bold text-gray-700">Your Resume Score</span>
-                <span className="text-2xl font-black text-purple-600">{scores.overall}%</span>
-              </div>
-              <div className="w-full bg-gray-100 h-3 rounded-full overflow-hidden">
-                <motion.div 
-                  initial={{ width: 0 }}
-                  animate={{ width: `${scores.overall}%` }}
-                  className="h-full bg-purple-600"
-                />
-              </div>
-            </div>
+        {/* Right Side: Action Center */}
+        <aside className="panel-right">
+          <div className="action-center-head">
+            <Zap size={18} className="text-purple" /> <h3>Action Center</h3>
+          </div>
 
-            {/* Breakdown */}
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-               <h3 className="font-bold text-gray-800 mb-4">Score Breakdown</h3>
-               <div className="space-y-4">
-                  {['Format', 'Content', 'Keywords'].map((item) => (
-                    <div key={item}>
-                      <div className="flex justify-between text-xs mb-1">
-                        <span className="text-gray-500 font-semibold">{item}</span>
-                        <span className="text-purple-600 font-bold">{scores[item.toLowerCase()]}%</span>
-                      </div>
-                      <div className="w-full bg-gray-100 h-2 rounded-full">
-                        <div 
-                          className="h-full bg-purple-400 rounded-full" 
-                          style={{ width: `${scores[item.toLowerCase()]}%` }}
-                        />
-                      </div>
-                    </div>
-                  ))}
-               </div>
-            </div>
-
-            {/* Feedback Section */}
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-              <h3 className="font-bold text-gray-800 mb-4">Feedback & Suggestions</h3>
-              
-              <div className="space-y-4">
-                <div className="p-4 bg-amber-50 rounded-xl border border-amber-100">
-                  <div className="flex items-center gap-2 mb-2">
-                    <AlertCircle size={16} className="text-amber-600" />
-                    <span className="font-bold text-amber-800 text-sm">Action Needed: Content</span>
-                  </div>
-                  <p className="text-xs text-amber-700 mb-3">Consider adding more metrics to your achievements. Use numbers to quantify impact.</p>
-                  <button 
-                    onClick={() => toggleSection('content')}
-                    className="text-xs font-bold text-amber-900 underline"
-                  >
-                    {expandedSections.content ? 'Hide details' : 'View suggestions'}
-                  </button>
-                  {expandedSections.content && (
-                    <div className="mt-2 text-xs text-amber-800 space-y-1 border-t border-amber-200 pt-2">
-                      <p>• Add % improvement figures</p>
-                      <p>• Specify team size managed</p>
-                    </div>
-                  )}
+          <AnimatePresence mode="wait">
+            {activeIssue === 'impact' ? (
+              <motion.div 
+                key="impact" initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }}
+                className="issue-alert-card active"
+              >
+                <div className="alert-header">
+                  <AlertCircle size={18} className="text-amber" />
+                  <strong>Impact Quantification</strong>
                 </div>
-              </div>
-            </div>
-
-          </div>
-        </div>
+                <p>Recruiters love numbers. Mention exactly <strong>how</strong> you achieved 40%.</p>
+                <div className="ai-snippet">
+                  "Improved performance by 40% <u>through lazy loading and image optimization.</u>"
+                </div>
+                <button className="btn-ai-fix"><Wand2 size={14}/> Auto-Fix</button>
+              </motion.div>
+            ) : (
+              <div className="empty-state">Select a highlight to see AI fixes</div>
+            )}
+          </AnimatePresence>
+        </aside>
       </div>
     </div>
   );
