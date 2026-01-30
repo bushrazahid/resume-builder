@@ -1,0 +1,257 @@
+.review-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #eef2ff 0%, #f5f3ff 50%, #fdf2f8 100%);
+  background-attachment: fixed;
+  padding: 2rem 1rem 4rem;
+}
+
+.review-content {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.review-tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.review-tab {
+  padding: 12px 20px;
+  background: transparent;
+  border: none;
+  font-size: 14px;
+  font-weight: 600;
+  color: #999;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.review-tab.active {
+  color: #7c3aed;
+  border-bottom-color: #7c3aed;
+}
+
+.review-layout {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 2rem;
+}
+
+.resume-preview-panel {
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 16px;
+  padding: 2rem;
+  animation: slideInUp 0.6s ease-out;
+}
+
+.resume-preview-content {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.preview-section {
+  margin-bottom: 2rem;
+}
+
+.preview-section:last-child {
+  margin-bottom: 0;
+}
+
+.preview-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1a1d29;
+  margin-bottom: 0.5rem;
+}
+
+.preview-subtitle {
+  font-size: 13px;
+  color: #666;
+  margin-bottom: 0.75rem;
+}
+
+.preview-text {
+  font-size: 13px;
+  color: #555;
+  line-height: 1.6;
+}
+
+.preview-list {
+  list-style: none;
+  margin-left: 0;
+}
+
+.preview-item {
+  font-size: 13px;
+  color: #555;
+  margin-bottom: 0.5rem;
+  padding-left: 1.5rem;
+  position: relative;
+}
+
+.preview-item::before {
+  content: '•';
+  position: absolute;
+  left: 0;
+  color: #7c3aed;
+}
+
+.review-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  animation: slideInUp 0.6s ease-out 0.1s both;
+}
+
+.score-card {
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 16px;
+  padding: 1.5rem;
+}
+
+.score-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.score-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1a1d29;
+}
+
+.score-value {
+  font-size: 28px;
+  font-weight: 800;
+  background: linear-gradient(135deg, #7c3aed 0%, #3b82f6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.score-bar {
+  width: 100%;
+  height: 8px;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.score-fill {
+  height: 100%;
+  background: linear-gradient(135deg, #7c3aed 0%, #3b82f6 100%);
+  transition: width 0.5s ease;
+}
+
+.feedback-card {
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 16px;
+  padding: 1.5rem;
+}
+
+.feedback-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1a1d29;
+  margin-bottom: 1rem;
+}
+
+.feedback-item {
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.02);
+  border-left: 3px solid #7c3aed;
+  border-radius: 6px;
+  margin-bottom: 0.75rem;
+}
+
+.feedback-item.warning {
+  border-left-color: #f59e0b;
+  background: rgba(245, 158, 11, 0.05);
+}
+
+.feedback-item.error {
+  border-left-color: #dc2626;
+  background: rgba(220, 38, 38, 0.05);
+}
+
+.feedback-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #7c3aed;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.25rem;
+}
+
+.feedback-label.warning {
+  color: #f59e0b;
+}
+
+.feedback-label.error {
+  color: #dc2626;
+}
+
+.feedback-text {
+  font-size: 13px;
+  color: #555;
+  line-height: 1.5;
+}
+
+.expand-button {
+  width: 100%;
+  padding: 10px;
+  background: transparent;
+  border: 1px solid rgba(124, 58, 237, 0.2);
+  color: #7c3aed;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 0.5rem;
+}
+
+.expand-button:hover {
+  background: rgba(124, 58, 237, 0.1);
+  border-color: rgba(124, 58, 237, 0.4);
+}
+
+@media (max-width: 1024px) {
+  .review-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .review-container {
+    padding: 1rem 0.5rem 2rem;
+  }
+
+  .resume-preview-panel,
+  .score-card,
+  .feedback-card {
+    padding: 1rem;
+  }
+
+  .review-tabs {
+    gap: 0.25rem;
+  }
+
+  .review-tab {
+    padding: 10px 15px;
+    font-size: 12px;
+  }
+}
