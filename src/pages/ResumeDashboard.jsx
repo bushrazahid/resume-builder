@@ -1,209 +1,99 @@
 'use client';
 
-import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import Header from "../components/Header";
-import { Check, AlertCircle, Info, ChevronDown, Award, Zap, Target } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
-import '../styles/ResumeReviewPage.css';
+import { useNavigate } from 'react-router-dom';
+import { Plus, FileText, MoreVertical, Clock, TrendingUp, Search } from 'lucide-react';
+import { motion } from 'framer-motion';
+import Header from '../components/Header';
+import '../styles/ResumeDashboard.css';
 
-const sampleResumeData = {
-  name: 'David Donaldson',
-  email: 'davidd@email.com',
-  phone: '+1-234-567-8901',
-  location: 'San Francisco, CA',
-  summary: 'Experienced Frontend Developer with 5+ years in React, TypeScript, and modern web technologies. Passionate about building user-centric applications with excellent performance.',
-  experience: [
-    {
-      company: 'Tech Corp',
-      position: 'Senior Frontend Developer',
-      duration: '2021 - Present',
-      details: ['Led development of customer dashboard', 'Improved performance by 40%']
-    },
-    {
-      company: 'StartUp Inc',
-      position: 'Frontend Developer',
-      duration: '2019 - 2021',
-      details: ['Developed responsive UI components', 'Mentored junior developers']
-    }
-  ],
-  education: [
-    {
-      school: 'State University',
-      degree: 'B.S. in Computer Science',
-      year: '2019'
-    }
-  ],
-  skills: ['React', 'TypeScript', 'JavaScript', 'CSS', 'Node.js', 'Git', 'Figma']
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { staggerChildren: 0.1 } }
 };
 
-const scores = {
-  overall: 81,
-  format: 92,
-  content: 78,
-  keywords: 74
+const itemVariants = {
+  hidden: { y: 20, opacity: 0 },
+  visible: { y: 0, opacity: 1 }
 };
 
-export default function ResumeReviewPage() {
-  const [expandedSections, setExpandedSections] = useState({});
-  const [activeTab, setActiveTab] = useState('preview');
-  const params = useParams();
-
-  const toggleSection = (section) => {
-    setExpandedSections(prev => ({
-      ...prev,
-      [section]: !prev[section]
-    }));
-  };
+export default function ResumeDashboard() {
+  const navigate = useNavigate();
+  const user = JSON.parse(localStorage.getItem('user') || '{"name": "Guest"}');
 
   return (
-    <div className="review-page-wrapper">
+    <div className="dashboard-wrapper">
       <Header />
-
-      <main className="review-main-container">
-        {/* Header Tabs Section */}
-        <div className="review-nav">
-          <div className="nav-tabs">
-            <button 
-              className={`nav-btn ${activeTab === 'preview' ? 'active' : ''}`}
-              onClick={() => setActiveTab('preview')}
-            >
-              Resume Preview
-            </button>
-            <button 
-              className={`nav-btn ${activeTab === 'report' ? 'active' : ''}`}
-              onClick={() => setActiveTab('report')}
-            >
-              AI Analysis Report
+      
+      <main className="dashboard-main">
+        <motion.header 
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="dash-header"
+        >
+          <div className="welcome-text">
+            <h1>Analytics <span className="text-gradient">Overview</span></h1>
+            <p>Welcome back, <strong>{user.name}</strong>. You have 3 active resumes this week.</p>
+          </div>
+          <div className="header-actions">
+            <div className="search-bar">
+              <Search size={16} />
+              <input type="text" placeholder="Search resumes..." />
+            </div>
+            <button className="primary-btn-premium" onClick={() => navigate('/job-details')}>
+              <Plus size={18} /> New Analysis
             </button>
           </div>
-        </div>
+        </motion.header>
 
-        <div className="review-grid">
-          {/* Left Panel: Resume Preview */}
+        <motion.div 
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          className="dash-grid"
+        >
+          {/* Advanced Create Card */}
           <motion.div 
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="resume-sheet-container"
+            variants={itemVariants}
+            whileHover={{ scale: 1.02, translateY: -5 }}
+            className="create-card-advanced" 
+            onClick={() => navigate('/job-details')}
           >
-            <div className="resume-sheet">
-              <header className="sheet-header">
-                <h1>{sampleResumeData.name}</h1>
-                <p>{sampleResumeData.email} • {sampleResumeData.phone} • {sampleResumeData.location}</p>
-              </header>
-
-              <section className="sheet-section">
-                <h3 className="section-label">Professional Summary</h3>
-                <p className="section-content">{sampleResumeData.summary}</p>
-              </section>
-
-              <section className="sheet-section">
-                <h3 className="section-label">Work Experience</h3>
-                {sampleResumeData.experience.map((exp, idx) => (
-                  <div key={idx} className="experience-item">
-                    <div className="item-title-row">
-                      <strong>{exp.position}</strong>
-                      <span className="duration">{exp.duration}</span>
-                    </div>
-                    <p className="company-name">{exp.company}</p>
-                    <ul className="bullet-points">
-                      {exp.details.map((detail, i) => (
-                        <li key={i}>{detail}</li>
-                      ))}
-                    </ul>
-                  </div>
-                ))}
-              </section>
-
-              <section className="sheet-section">
-                <h3 className="section-label">Skills & Core Competencies</h3>
-                <div className="skills-grid">
-                  {sampleResumeData.skills.map((skill, idx) => (
-                    <span key={idx} className="skill-tag">{skill}</span>
-                  ))}
-                </div>
-              </section>
+            <div className="inner-border">
+              <div className="icon-glow"><Plus size={32} /></div>
+              <h3>Analyze New Resume</h3>
+              <p>Upload PDF or Docx to get AI feedback</p>
             </div>
           </motion.div>
 
-          {/* Right Panel: AI Dashboard */}
+          {/* Dynamic Resume Card */}
           <motion.div 
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="analysis-sidebar"
+            variants={itemVariants}
+            whileHover={{ scale: 1.02 }}
+            className="resume-card-premium" 
+            onClick={() => navigate('/review/demo')}
           >
-            {/* Score Card */}
-            <div className="score-card-v2">
-              <div className="circular-score">
-                <svg viewBox="0 0 36 36" className="circular-chart">
-                  <path className="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-                  <path className="circle" strokeDasharray={`${scores.overall}, 100`} d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-                </svg>
-                <div className="score-text">
-                  <span className="number">{scores.overall}</span>
-                  <span className="percent">%</span>
-                </div>
-              </div>
-              <div className="score-info">
-                <h3>Overall Score</h3>
-                <p>Great! Your resume is in the top 15% of candidates.</p>
+            <div className="card-glass-effect"></div>
+            <div className="card-top">
+              <div className="status-indicator">Active</div>
+              <div className="score-badge-mini">
+                <TrendingUp size={12} /> 92%
               </div>
             </div>
-
-            {/* Metrics Breakdown */}
-            <div className="metrics-box">
-              <h4 className="box-title">Score Breakdown</h4>
-              <div className="metric-rows">
-                {[
-                  { label: 'Format', val: scores.format, icon: <Zap size={14}/> },
-                  { label: 'Content', val: scores.content, icon: <Target size={14}/> },
-                  { label: 'Keywords', val: scores.keywords, icon: <Award size={14}/> }
-                ].map((m) => (
-                  <div key={m.label} className="metric-row">
-                    <div className="metric-header">
-                      <span>{m.icon} {m.label}</span>
-                      <strong>{m.val}%</strong>
-                    </div>
-                    <div className="progress-track">
-                      <motion.div 
-                        initial={{ width: 0 }} 
-                        animate={{ width: `${m.val}%` }} 
-                        className="progress-fill" 
-                      />
-                    </div>
-                  </div>
-                ))}
+            <div className="card-mid">
+              <div className="file-avatar">
+                <FileText size={24} />
+              </div>
+              <div className="file-details">
+                <h3>Sr. Frontend Engineer</h3>
+                <p>Google • Mountain View, CA</p>
               </div>
             </div>
-
-            {/* AI Suggestions */}
-            <div className="ai-suggestions">
-              <h4 className="box-title">AI Suggestions</h4>
-              <div className="suggestion-item warning">
-                <div className="suggestion-header">
-                  <AlertCircle size={18} />
-                  <span>Missing Quantifiable Results</span>
-                </div>
-                <p>Add specific percentages or numbers to your Tech Corp experience.</p>
-                <button onClick={() => toggleSection('ai')} className="text-btn">
-                  {expandedSections.ai ? 'Show Less' : 'How to fix?'}
-                </button>
-                <AnimatePresence>
-                  {expandedSections.ai && (
-                    <motion.div 
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: 'auto', opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      className="suggestion-details"
-                    >
-                      Example: "Increased team efficiency by 20% using React."
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
+            <div className="card-bottom">
+              <div className="time-info"><Clock size={12} /> Modified 2h ago</div>
+              <button className="icon-btn-ghost"><MoreVertical size={16} /></button>
             </div>
           </motion.div>
-        </div>
+        </motion.div>
       </main>
     </div>
   );
